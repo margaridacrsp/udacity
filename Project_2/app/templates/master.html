@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Disasters</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body style="background-color:#F5F5F5;">
+    
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav" style="margin-left:15px">
+            <li><a href="/">Home</a></li>
+            <li><a href="https://www.udacity.com/">Udacity</a></li>
+            <li><a href="https://github.com/">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="jumbotron" style="margin-top:25px">
+    <h1 class="text-center">Disaster Response Project</h1>
+</div>
+
+    
+<div>
+    <div class="container">
+        <h3 class="text-left">Classify message of a disaster situation</h3>
+        <br />
+             
+        <form class="row g-2" action="/go" method="get">
+          <div class="col-lg-10 form-group-lg">
+            <input type="text" class="form-control form-control-lg" name="query" placeholder="Enter a message to classify" value ="{{query}}">
+          </div>
+          <div class="col-auto form-group-lg">
+            <button type="submit" class="btn btn-lg btn-primary">Classify Message</button>
+          </div>
+        </form>
+        <br />
+        <hr />
+      
+        {% block message %}
+        {% endblock %}
+    </div>
+</div>    
+
+    
+    
+<div class="container">
+    {% block content %}
+        <div class="page-header">
+            <h2 class="text-center">Overview of Training Dataset</h2>
+        </div>
+    {% endblock %}
+
+    {% for id in ids %}
+        <div id="{{id}}"></div>
+    {% endfor %}  
+        <hr />
+</div>
+   
+
+<script type="text/javascript">
+    const graphs = {{graphJSON | safe}};
+    const ids = {{ids | safe}};
+    for(let i in graphs) {
+        Plotly.plot(ids[i], graphs[i].data, graphs[i].layout);
+    }
+</script>
+
+    
+<ol class="breadcrumb">
+    <br/>
+</ol>
+    
+    
+</body>
+</html>

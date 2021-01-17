@@ -1,13 +1,16 @@
-import sys
+"""
+ML Pipeline
+Project: Disaster Response Pipeline (Udacity - Data Science Nanodegree)
 
+Input Arguments:
+    -> SQL Database name (e.g. DisasterResponse.db)
+    -> Path to pickle file where the final model will be saved(e.g. classifier.pkl)
 
-#python train_classifier.py disaster_response.db output_model.wb
-#database_filepath = 'disaster_response.db'
-#model_filepath = 'output_model.wb'
-#print(sys.argv)
-
+"""
 
 # import libraries
+import sys
+
 import pandas as pd
 import numpy as np
 import pickle
@@ -28,8 +31,19 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 
 
-
 def load_data(database_filepath):
+    """
+    Load data from database
+    
+    Arguments:
+        database_filepath -> Path of SQL Database
+
+    Outputs:
+        X -> dataframe containing the features
+        Y -> dataframe containing the labels
+        category_names -> List of categories names
+    """
+    
     #inicialize database
     database_filepath =  'sqlite:///' + database_filepath
     engine = create_engine(database_filepath)
@@ -44,6 +58,16 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Tokenize function
+    
+    Arguments:
+        text -> Input text
+
+    Outputs:
+        words_lemmed -> Text tokenized
+    """
+    
     #Normalize text: remove pontuation + lower text
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     
@@ -60,6 +84,12 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Build pipeline model 
+    
+    Outputs:
+        cv -> ML Pipeline that process text messages and apply a classifier
+    """
     pipeline = Pipeline([
         ('vect',CountVectorizer(tokenizer=tokenize)),
         ('tfidif',TfidfTransformer()),
@@ -68,12 +98,7 @@ def build_model():
     
     # specify parameters for grid search
     parameters = {
-        #'vect__ngram_range': ((1, 1), (1, 2)),
-        #'vect__max_df': (0.5, 0.75, 1.0),
-        #'vect__max_features': (None, 5000, 10000),
-        #'tfidif__use_idf': (True, False),
-        'clf__estimator__n_estimators': [5, 10, 20],
-        #'clf__estimator__min_samples_split': [2, 3, 4]
+        'clf__estimator__n_estimators': [10, 20]
     }
 
     cv = GridSearchCV(pipeline, param_grid=parameters)
@@ -82,34 +107,68 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate pipeline model 
+    
+    Arguments:
+        model -> ML Pipeline
+        X_test -> Test features
+        Y_test -> Test labels
+        category_names -> List of categories names
+    """
+    
+    #Predict Model
     Y_pred = model.predict(X_test)
     Y_pred_cat = pd.DataFrame(Y_pred, columns=category_names)
-
+    
+    #Create classification report with: f1 score, precision and recall for each output category of the dataset
     for i in range(len(category_names)):
         print('Category: {}'.format(category_names[i].upper()), "\n\n",
               classification_report(Y_test.iloc[:,i], Y_pred_cat.iloc[:,i]))
 
 
 def save_model(model, model_filepath):
+    """
+    Save pipeline model 
+    
+    Arguments:
+        model -> ML Pipeline
+        model_filepath -> Path to save the model in a .pkl file
+    """
+    
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
+    """
+    Main function that calls the other functions in the following order:
+        1. Load data from SQL database
+        2. Train ML model on training set
+        3. Evaluate Model
+        4. Save model in .pkl file
+    """
+    
+    #Execute the ML Pipeline if the count of input arguments is 3
     if len(sys.argv) == 3:
+        #save the input arguments into variables
         database_filepath, model_filepath = sys.argv[1:]
+        
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
+        #1. Load data from SQL database
         X, Y, category_names = load_data(database_filepath)
+        
+        #2. Train ML model on training set
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
         print('Building model...')
-        model = build_model()
-        
+        model = build_model() 
         print('Training model...')
         model.fit(X_train, Y_train)
         
+        #3. Evaluate Model
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
-
+        
+        #4. Save model in .pkl file
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
 
