@@ -57,7 +57,6 @@ def clean_data(df):
     for column in categories:
         categories[column] = categories[column].apply(lambda x: x[-1])
         categories[column] = categories[column].astype(int)
-    categories.head()
     
     #Drop old categories column from df and concatenate new columns
     df.drop('categories',axis=1,inplace=True)
@@ -65,6 +64,9 @@ def clean_data(df):
     
     #Remove duplicate lines
     df.drop_duplicates(inplace=True)
+    
+    #Remove the lines where the category 'related' as value 2
+    df.drop(df.index[df['related'] > 1],inplace = True)
     
     return df
      
