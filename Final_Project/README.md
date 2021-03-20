@@ -41,6 +41,23 @@ images folder:
 - several images created in the jupyter notebook used in the articles
 
 
+## Libraries used
+- numpy
+- pandas
+- seaborn
+- matplotlib.pyplot
+- textwrap
+- datetime
+- sklearn.model_selection
+- sklearn.pipeline
+- sklearn.preprocessing
+- sklearn.ensemble
+- sklearn.tree
+- sklearn.neighbors
+- sklearn.linear_model
+- sklearn.metrics 
+
+
 ## Run
 
 Each jupyter notebook can be run without dependencies.
