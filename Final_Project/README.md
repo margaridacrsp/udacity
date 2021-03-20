@@ -6,7 +6,7 @@ Some exploratory data analysis was done to understand which variables could have
 
 The dataset was divided into training and testing, in the proportion 67% and 33%, respectively, and 5 classification models were trained and the hyper-parameters where adjusted using Grid Search.
 
-Finally, the model that showed the best results for predicting churn was the Logistic Regression, with an AUC of 0.717. This model obtained the highest scores in all 4 metrics chosen.
+Finally, the model that showed the best results for predicting churn was the Logistic Regression, with an AUC of 0.717. This model obtained the highest scores in all 5 metrics chosen.
 
 To view the full article go to https://margarida-crespo.medium.com/why-customers-say-goodbye-b341bed96502 .
 
